@@ -122,29 +122,23 @@ def performance_on_categorical_slice(
 
     """
     # TODO: implement the function
+    data_slice = data[data[column_name] == slice_value]
+
     X_slice, y_slice, _, _ = process_data(
         # your code here
         # for input data, use data in column given as "column_name", with the slice_value 
         # use training = False
         
-        data, column_name=[slice_value], label=label, training=False, encoder=encoder, lb=lb
+        data_slice,
+        categorical_features=categorical_features,
+        label=label,
+        training=False,
+        encoder=encoder,
+        lb=lb,
     )
-    
-    #Computing the metrics on a slice of the data
-    if label is not None:
-        X_slice, y_slice = process_data(
-            data[data[column_name] == slice_value],
-            categorical_features=categorical_features,
-            label=label,
-            training=False,
-            encoder=encoder,
-            lb=lb,
-        )
-    else:
-        X_slice = data[data[column_name] == slice_value]
-        y_slice = np.array([])
-        
-        
-    preds = inference(model, X_slice) # your code here to get prediction on X_slice using the inference function
+
+    # Run inference and compute metrics
+    preds = inference(model, X_slice)
     precision, recall, fbeta = compute_model_metrics(y_slice, preds)
+
     return precision, recall, fbeta
